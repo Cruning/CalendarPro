@@ -21,7 +21,7 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 )
-
+//TODO Надо вытащить тему в отдельный модуль
 @Composable
 fun CalendarProTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
