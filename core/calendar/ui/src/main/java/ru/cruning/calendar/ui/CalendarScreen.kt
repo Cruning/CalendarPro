@@ -42,7 +42,7 @@ private val list = (1..30).map {
 }
 
 @Composable
-fun CalendarScreen() {
+fun CalendarScreen(modifier: Modifier) {
     //todo из viewModel
     Calendar(
         February,
@@ -174,7 +174,7 @@ fun Day(day: DayUi) {
 @Preview(device = "id:pixel_7", showSystemUi = true)
 @Composable
 fun CalendarScreenPreview() {
-    CalendarScreen()
+    CalendarScreen(Modifier)
 }
 
 
