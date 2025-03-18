@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
             CalendarProTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        CalendarScreen(modifier = Modifier)
+                        CalendarScreen()
                     }
                 }
             }
@@ -41,9 +41,7 @@ fun GreetingPreview() {
     CalendarProTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             Box(modifier = Modifier.padding(innerPadding)) {
-                CalendarScreen(
-                    modifier = Modifier
-                )
+                CalendarScreen()
             }
         }
     }

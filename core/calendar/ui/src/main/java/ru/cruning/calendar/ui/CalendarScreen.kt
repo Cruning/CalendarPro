@@ -2,6 +2,7 @@ package ru.cruning.calendar.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -21,6 +23,8 @@ import androidx.compose.material.icons.automirrored.sharp.KeyboardArrowRight
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,30 +32,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.cruning.calendar.ui.Month.*
+import androidx.hilt.navigation.compose.hiltViewModel
+import ru.cruning.calendar.ui.Month.January
 import ru.cruning.calendar.ui.Week.Monday
 
 
-private val list = (1..30).map {
-    DayUi(
-        dayOfTheWeek = Monday,
-        dayOfMonth = it,
-        isToday = it == 11,
-        isSelected = it == 9
-    )
+@Composable
+fun CalendarScreen(
+    viewModel: CalendarViewModel = hiltViewModel(),
+) {
+    val rem by remember { viewModel.state }
+    when (val state = rem) {
+        is CalendarState.Data -> {
+            Column(
+                verticalArrangement = Arrangement.SpaceAround
+            ) {
+                Calendar(
+                    month = state.month,
+                    year = state.year,
+                    list = state.list,
+                    viewModel::selectDay
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                )
+            }
+        }
+
+        CalendarState.Error -> {
+            Text("Ошибка")
+        }
+
+        CalendarState.Loading -> {
+            Text("Загрузка")
+        }
+    }
 }
 
 @Composable
-fun CalendarScreen(modifier: Modifier) {
-    //todo из viewModel
-    Calendar(
-        February,
-        list
-    )
-}
-
-@Composable
-fun MonthTitle(month: Month) {
+fun MonthTitle(month: Month, year: Int) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -75,7 +96,7 @@ fun MonthTitle(month: Month) {
             )
         }
         Text(
-            text = month.name + " " + "2024"
+            text = "${month.name} $year"
         )
         IconButton(
             onClick = {},
@@ -94,10 +115,12 @@ fun MonthTitle(month: Month) {
 @Composable
 fun Calendar(
     month: Month,
+    year: Int,
     list: List<DayUi>,
+    clickDay: (DayUi) -> Unit,
 ) {
     Column {
-        MonthTitle(month)
+        MonthTitle(month, year)
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
             horizontalArrangement = Arrangement.SpaceAround,
@@ -119,17 +142,12 @@ fun Calendar(
                         fontSize = 12.sp,
                         color = Color.Black,
                         textAlign = TextAlign.Center,
-
-                        )
+                    )
                 }
             }
             items(list) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-//                        .height(44.dp)
-                ) {
-                    Day(it)
+                Box(contentAlignment = Alignment.Center) {
+                    Day(it, clickDay)
                 }
             }
         }
@@ -137,51 +155,72 @@ fun Calendar(
 }
 
 @Composable
-fun Day(day: DayUi) {
-    Box(
+fun Day(day: DayUi, click: (DayUi) -> Unit) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .height(44.dp)
             .width(44.dp)
             .background(
-                color = if (day.isSelected) Color.Blue else Color.White,
+                color = when {
+                    day.dayOfMonth == 0 -> Color.Transparent
+                    day.isSelected -> Color.Blue
+                    else -> Color.White
+                },
                 shape = CircleShape,
             )
+            .clickable { click.invoke(day) }
     ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = day.dayOfMonth.toString(),
-                color = if (day.isSelected) Color.White else Color.Black,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            )
-            if (day.isToday) {
-                Box(
-                    modifier = Modifier
-                        .size(3.dp)
-                        .background(
-                            color = Color.Blue,
-                            shape = CircleShape
-                        )
+        Text(
+            text = day.dayOfMonth.toString(),
+            color = when {
+                day.dayOfMonth == 0 -> Color.Transparent
+                day.isSelected -> Color.White
+                else -> Color.Black
+            },
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .wrapContentHeight()
+                .weight(1f)
+        )
+        Text(
+            text = day.money.toString(),
+            color =  when {
+                day.dayOfMonth == 0 -> Color.Transparent
+                day.isSelected -> Color.White
+                else -> Color.Black
+            },
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .wrapContentHeight()
+                .weight(1f)
+        )
+    }
+    if (day.isToday) {
+        Box(
+            modifier = Modifier
+                .size(3.dp)
+                .background(
+                    color = Color.Blue,
+                    shape = CircleShape
                 )
-            }
-        }
+        )
     }
 }
 
 @Preview(device = "id:pixel_7", showSystemUi = true)
 @Composable
 fun CalendarScreenPreview() {
-    CalendarScreen(Modifier)
+    CalendarScreen()
 }
-
 
 @Preview(widthDp = 412, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun MonthTitlePreview() {
-    MonthTitle(month = January)
+    MonthTitle(month = January, 2025)
 }
 
 @Preview
@@ -189,7 +228,17 @@ fun MonthTitlePreview() {
 fun MonthPreview() {
     Calendar(
         month = January,
-        list = list
+        year = 2025,
+        list = (1..30).map {
+            DayUi(
+                dayOfTheWeek = Monday,
+                dayOfMonth = it,
+                isToday = it == 11,
+                money = 2000f,
+                isSelected = it == 9
+            )
+        },
+        {},
     )
 }
 
@@ -201,8 +250,10 @@ fun DayPreview() {
             dayOfTheWeek = Monday,
             dayOfMonth = 1,
             isToday = false,
+            money = 2000f,
             isSelected = false,
-        )
+        ),
+        {},
     )
 }
 
@@ -214,8 +265,10 @@ fun TodayPreview() {
             dayOfTheWeek = Monday,
             dayOfMonth = 20,
             isToday = true,
+            money = 2000f,
             isSelected = false,
-        )
+        ),
+        {},
     )
 }
 
@@ -227,14 +280,17 @@ fun SelectedDayPreview() {
             dayOfTheWeek = Monday,
             dayOfMonth = 20,
             isToday = true,
+            money = 2000f,
             isSelected = true
-        )
+        ),
+        {},
     )
 }
 
 data class DayUi(
     val dayOfTheWeek: Week,
     val dayOfMonth: Int,
+    val money: Float,
     val isToday: Boolean,
     val isSelected: Boolean,
 )
@@ -255,4 +311,5 @@ enum class Week(
 enum class Month {
     January,
     February,
+    March,
 }
