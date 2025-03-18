@@ -1,4 +1,4 @@
-package ru.cruning.calendarpro.ui.theme
+package ru.cruning.core.designsystem.compose.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

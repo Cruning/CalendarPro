@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -12,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import dagger.hilt.android.AndroidEntryPoint
 import ru.cruning.calendar.ui.CalendarScreen
-import ru.cruning.calendarpro.ui.theme.CalendarProTheme
+import ru.cruning.core.designsystem.compose.theme.CalendarProTheme
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,7 +23,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             CalendarProTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CalendarScreen(modifier = Modifier.padding(innerPadding))
+                    Box(modifier = Modifier.padding(innerPadding)) {
+                        CalendarScreen(modifier = Modifier)
+                    }
                 }
             }
         }
@@ -37,9 +40,11 @@ class MainActivity : ComponentActivity() {
 fun GreetingPreview() {
     CalendarProTheme {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            CalendarScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
+            Box(modifier = Modifier.padding(innerPadding)) {
+                CalendarScreen(
+                    modifier = Modifier
+                )
+            }
         }
     }
 }

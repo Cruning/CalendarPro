@@ -23,7 +23,6 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
             )
         }
     }
@@ -40,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:designsystem"))
     implementation(project(":core:calendar:data"))
     implementation(project(":core:calendar:ui"))
     implementation(libs.androidx.activity.compose)
