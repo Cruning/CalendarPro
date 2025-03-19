@@ -39,7 +39,7 @@ import ru.cruning.calendar.ui.Week.Monday
 
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewModel = hiltViewModel(),
+    viewModel: CalendarViewModel = hiltViewModel<CalendarViewModel>(),
 ) {
     val rem by remember { viewModel.state }
     when (val state = rem) {
@@ -187,7 +187,7 @@ fun Day(day: DayUi, click: (DayUi) -> Unit) {
         )
         Text(
             text = day.money.toString(),
-            color =  when {
+            color = when {
                 day.dayOfMonth == 0 -> Color.Transparent
                 day.isSelected -> Color.White
                 else -> Color.Black
