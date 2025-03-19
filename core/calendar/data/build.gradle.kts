@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.cruning.core.data"
+    namespace = "ru.cruning.calendar.data"
     compileSdk = 35
 
     defaultConfig {

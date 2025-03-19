@@ -1,4 +1,4 @@
-package ru.cruning.domain
+package ru.cruning.calendar.domain
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

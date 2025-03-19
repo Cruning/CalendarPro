@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "ru.cruning.domain"
+    namespace = "ru.cruning.calendar.domain"
     compileSdk = 35
 
     defaultConfig {

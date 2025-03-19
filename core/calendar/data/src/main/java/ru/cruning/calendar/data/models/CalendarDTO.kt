@@ -1,4 +1,4 @@
-package ru.cruning.core.data.models
+package ru.cruning.calendar.data.models
 
 data class CalendarDTO(
     val months: List<MonthDTO>,

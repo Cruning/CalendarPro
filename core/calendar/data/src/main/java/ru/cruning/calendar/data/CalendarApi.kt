@@ -1,8 +1,8 @@
-package ru.cruning.core.data
+package ru.cruning.calendar.data
 
 import retrofit2.http.GET
 import retrofit2.http.Path
-import ru.cruning.core.data.models.CalendarDTO
+import ru.cruning.calendar.data.models.CalendarDTO
 
 internal interface CalendarApi {
     @GET("data/{region}/{year}/calendar.json")

@@ -1,9 +1,9 @@
-package ru.cruning.core.data.repository
+package ru.cruning.calendar.data.repository
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.cruning.core.data.CalendarApi
-import ru.cruning.core.data.models.CalendarDTO
+import ru.cruning.calendar.data.CalendarApi
+import ru.cruning.calendar.data.models.CalendarDTO
 import javax.inject.Inject
 
 internal class CalendarRepositoryImpl @Inject constructor(
