@@ -6,12 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import ru.cruning.domain.TestFlowUsecase
+import ru.cruning.calendar.domain.models.Month
+import ru.cruning.calendar.domain.usecases.CalendarUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
-    private val flowUseCase: TestFlowUsecase,
+    private val calendarUseCase: CalendarUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf<CalendarState>(CalendarState.Loading)
@@ -19,39 +20,27 @@ class CalendarViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            flowUseCase.observe.collect { countDay ->
-                val money = getSalary() / countDay
-                val firstDayIndex = 5
+            calendarUseCase.observe.collect { calendar ->
+                val money = getSalary() / calendar.list.size
                 _state.value = CalendarState.Data(
                     month = Month.March,
                     year = 2025,
-                    list = (1..countDay + firstDayIndex).map { index ->
-                        if (index < firstDayIndex) {
-                            DayUi(
-                                dayOfTheWeek = Week.entries[index],
-                                dayOfMonth = 0,
-                                money = money / countDay,
-                                isToday = false,
-                                isSelected = false,
-                            )
-                        } else {
-                            val dayOfTheWeek: Week = Week.entries[index / Week.entries.size]
-                            DayUi(
-                                dayOfTheWeek = dayOfTheWeek,
-                                dayOfMonth = index - firstDayIndex,
-                                money = money / countDay,
-                                isToday = index == 18,
-                                isSelected = false,
-                            )
-                        }
+                    list = calendar.list.map {
+                        DayUi(
+                            dayOfTheWeek = it.dayOfTheWeek,
+                            dayOfMonth = it.dayOfMonth,
+                            money = money,
+                            isToday = false,
+                            isSelected = false,
+                        )
                     }
                 )
             }
         }
-        flowUseCase(
-            args = TestFlowUsecase.Args(
-                qwer = "2",
-                asdf = true,
+        calendarUseCase(
+            args = CalendarUseCase.Args(
+                month = Month.March,
+                year = 2025,
             )
         )
     }

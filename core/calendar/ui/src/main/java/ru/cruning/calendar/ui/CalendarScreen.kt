@@ -33,8 +33,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import ru.cruning.calendar.ui.Month.January
-import ru.cruning.calendar.ui.Week.Monday
+import ru.cruning.calendar.domain.models.Month
+import ru.cruning.calendar.domain.models.Month.January
+import ru.cruning.calendar.domain.models.Week
+import ru.cruning.calendar.domain.models.Week.Monday
 
 
 @Composable
@@ -294,22 +296,3 @@ data class DayUi(
     val isToday: Boolean,
     val isSelected: Boolean,
 )
-
-
-enum class Week(
-    val abbreviatedName: String
-) {
-    Monday("Mon"),
-    Tuesday("Tue"),
-    Wednesday("Wed"),
-    Thursday("Thu"),
-    Friday("Fri"),
-    Saturday("Sat"),
-    Sunday("Sun"),
-}
-
-enum class Month {
-    January,
-    February,
-    March,
-}

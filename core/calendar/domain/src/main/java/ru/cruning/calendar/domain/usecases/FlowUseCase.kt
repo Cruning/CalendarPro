@@ -1,14 +1,11 @@
-package ru.cruning.calendar.domain
+package ru.cruning.calendar.domain.usecases
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
 //todo вынести в какой то отдельный модуль
 abstract class FlowUseCase<Args, Type> {
@@ -28,17 +25,3 @@ abstract class FlowUseCase<Args, Type> {
     protected abstract fun createFlow(args: Args): Flow<Type>
 }
 
-class TestFlowUsecase @Inject constructor(
-) : FlowUseCase<TestFlowUsecase.Args, Int>() {
-
-    data class Args(
-        private val qwer: String,
-        private val asdf: Boolean,
-    )
-
-    override fun createFlow(args: Args) = flow {
-        delay(2000)
-        emit(31)
-    }
-
-}
