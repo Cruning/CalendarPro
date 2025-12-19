@@ -31,6 +31,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlin.datetime)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
 }

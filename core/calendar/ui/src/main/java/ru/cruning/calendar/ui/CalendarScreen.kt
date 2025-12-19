@@ -27,7 +27,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +39,7 @@ import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.models.Month.January
 import ru.cruning.calendar.domain.models.Week
 import ru.cruning.calendar.domain.models.Week.Monday
+import ru.cruning.calendar.domain.models.Week.Thursday
 
 
 @Composable
@@ -80,7 +83,7 @@ fun MonthTitle(month: Month, year: Int) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(White)
             .padding(
                 horizontal = 16.dp,
                 vertical = 32.dp,
@@ -128,7 +131,7 @@ fun Calendar(
             horizontalArrangement = Arrangement.SpaceAround,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .background(White)
                 .padding(horizontal = 16.dp),
         ) {
             items(
@@ -142,10 +145,13 @@ fun Calendar(
                     Text(
                         text = it.abbreviatedName,
                         fontSize = 12.sp,
-                        color = Color.Black,
+                        color = Black,
                         textAlign = TextAlign.Center,
                     )
                 }
+            }
+            items(listOf(1..Week.entries.indexOf(list.first().dayOfTheWeek))) {
+                Box { }
             }
             items(list) {
                 Box(contentAlignment = Alignment.Center) {
@@ -165,48 +171,41 @@ fun Day(day: DayUi, click: (DayUi) -> Unit) {
             .height(44.dp)
             .width(44.dp)
             .background(
-                color = when {
-                    day.dayOfMonth == 0 -> Color.Transparent
-                    day.isSelected -> Color.Blue
-                    else -> Color.White
-                },
+                color = Blue.takeIf { day.isSelected } ?: White,
                 shape = CircleShape,
             )
             .clickable { click.invoke(day) }
     ) {
         Text(
             text = day.dayOfMonth.toString(),
-            color = when {
-                day.dayOfMonth == 0 -> Color.Transparent
-                day.isSelected -> Color.White
-                else -> Color.Black
-            },
+            color = White.takeIf { day.isSelected } ?: Black,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .wrapContentHeight()
                 .weight(1f)
         )
-        Text(
-            text = day.money.toString(),
-            color = when {
-                day.dayOfMonth == 0 -> Color.Transparent
-                day.isSelected -> Color.White
-                else -> Color.Black
-            },
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .wrapContentHeight()
-                .weight(1f)
-        )
+//        todo скорее всего будет под колендарем в отдельном блоке
+//        Text(
+//            text = day.money.toString(),
+//            color = when {
+//                day.dayOfMonth == 0 -> Color.Transparent
+//                day.isSelected -> Color.White
+//                else -> Color.Black
+//            },
+//            fontSize = 14.sp,
+//            textAlign = TextAlign.Center,
+//            modifier = Modifier
+//                .wrapContentHeight()
+//                .weight(1f)
+//        )
     }
     if (day.isToday) {
         Box(
             modifier = Modifier
                 .size(3.dp)
                 .background(
-                    color = Color.Blue,
+                    color = Blue,
                     shape = CircleShape
                 )
         )
@@ -225,7 +224,7 @@ fun MonthTitlePreview() {
     MonthTitle(month = January, 2025)
 }
 
-@Preview
+@Preview(widthDp = 412)
 @Composable
 fun MonthPreview() {
     Calendar(
@@ -233,15 +232,14 @@ fun MonthPreview() {
         year = 2025,
         list = (1..30).map {
             DayUi(
-                dayOfTheWeek = Monday,
+                dayOfTheWeek = Thursday,
                 dayOfMonth = it,
                 isToday = it == 11,
                 money = 2000f,
                 isSelected = it == 9
             )
         },
-        {},
-    )
+    ) {}
 }
 
 @Preview(widthDp = 49, heightDp = 44)
@@ -255,8 +253,7 @@ fun DayPreview() {
             money = 2000f,
             isSelected = false,
         ),
-        {},
-    )
+    ) {}
 }
 
 @Preview(widthDp = 49, heightDp = 44)
@@ -270,8 +267,7 @@ fun TodayPreview() {
             money = 2000f,
             isSelected = false,
         ),
-        {},
-    )
+    ) {}
 }
 
 @Preview(widthDp = 49, heightDp = 44)
@@ -285,8 +281,7 @@ fun SelectedDayPreview() {
             money = 2000f,
             isSelected = true
         ),
-        {},
-    )
+    ) {}
 }
 
 data class DayUi(

@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.usecases.CalendarUseCase
 import javax.inject.Inject
@@ -19,24 +20,22 @@ class CalendarViewModel @Inject constructor(
     val state: State<CalendarState> = _state
 
     init {
-        viewModelScope.launch {
-            calendarUseCase.observe.collect { calendar ->
-                val money = getSalary() / calendar.list.size
-                _state.value = CalendarState.Data(
-                    month = Month.March,
-                    year = 2025,
-                    list = calendar.list.map {
-                        DayUi(
-                            dayOfTheWeek = it.dayOfTheWeek,
-                            dayOfMonth = it.dayOfMonth,
-                            money = money,
-                            isToday = false,
-                            isSelected = false,
-                        )
-                    }
-                )
-            }
-        }
+        calendarUseCase.observe.onEach { calendar ->
+            val money = getSalary() / calendar.size
+            _state.value = CalendarState.Data(
+                month = Month.March,
+                year = 2025,
+                list = calendar.map {
+                    DayUi(
+                        dayOfTheWeek = it.dayOfTheWeek,
+                        dayOfMonth = it.dayOfMonth,
+                        money = money,
+                        isToday = false,
+                        isSelected = false,
+                    )
+                }
+            )
+        }.launchIn(viewModelScope)
         calendarUseCase(
             args = CalendarUseCase.Args(
                 month = Month.March,

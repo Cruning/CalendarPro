@@ -1,15 +1,15 @@
 package ru.cruning.calendar.domain.usecases
 
 import kotlinx.coroutines.flow.flow
-import ru.cruning.calendar.domain.models.Calendar
 import ru.cruning.calendar.domain.models.Day
 import ru.cruning.calendar.domain.models.Month
-import ru.cruning.calendar.domain.models.Week
 import ru.cruning.calendar.domain.usecases.CalendarUseCase.Args
+import ru.cruning.calendar.domain.mappers.DayMapperImpl
 import javax.inject.Inject
 
 class CalendarUseCase @Inject constructor(
-) : FlowUseCase<Args, Calendar>() {
+
+) : FlowUseCase<Args, List<Day>>() {
 
     data class Args(
         val month: Month,
@@ -17,26 +17,15 @@ class CalendarUseCase @Inject constructor(
     )
 
     override fun createFlow(args: Args) = flow {
-        val firstDayOfWeek = java.util.Calendar.getInstance().let {
-            it.set(args.year + 1900, Month.entries.indexOf(args.month), 1)
-            it.get(java.util.Calendar.DAY_OF_WEEK)
-        }
-        when (Month.entries.indexOf(args.month)) {
-            1, 3, 5, 7, 8, 10, 12 -> 31
-            2 -> 28
-            else -> 30
-        }.let { size ->
-            (1..size)
-                .map {
-                    Day(
-                        dayOfTheWeek = Week.entries[it + firstDayOfWeek / Week.entries.size],
-                        dayOfMonth = it,
-                        isFree = false
-                    )
-                }
-        }.let(::Calendar).let {
-            emit(it)
-        }
+        val countDays = getCountDays(args.year, args.month.ordinal + 1)
+        (1..countDays)
+            .map(DayMapperImpl(args.year, args.month)::mapTo)
+            .let { emit(it) }
     }
 
+    private fun getCountDays(year: Int, month: Int) = when (month) {
+        1, 3, 5, 7, 8, 10, 12 -> 31
+        2 -> if (year % 4 == 0) 29 else 28
+        else -> 30
+    }
 }
