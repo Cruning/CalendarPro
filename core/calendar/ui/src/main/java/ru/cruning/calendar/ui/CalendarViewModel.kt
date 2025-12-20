@@ -4,27 +4,27 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.usecases.CalendarUseCase
-import javax.inject.Inject
 
-@HiltViewModel
-class CalendarViewModel @Inject constructor(
+class CalendarViewModel(
     private val calendarUseCase: CalendarUseCase,
 ) : ViewModel() {
 
     private val _state = mutableStateOf<CalendarState>(CalendarState.Loading)
     val state: State<CalendarState> = _state
 
+    var year = 2025
+    var month = Month.December
+
     init {
         calendarUseCase.observe.onEach { calendar ->
             val money = getSalary() / calendar.size
             _state.value = CalendarState.Data(
-                month = Month.March,
-                year = 2025,
+                month = month,
+                year = year,
                 list = calendar.map {
                     DayUi(
                         dayOfTheWeek = it.dayOfTheWeek,
@@ -36,10 +36,10 @@ class CalendarViewModel @Inject constructor(
                 }
             )
         }.launchIn(viewModelScope)
-        calendarUseCase(
+        calendarUseCase.invoke(
             args = CalendarUseCase.Args(
-                month = Month.March,
-                year = 2025,
+                month = month,
+                year = year,
             )
         )
     }
@@ -66,6 +66,48 @@ class CalendarViewModel @Inject constructor(
             CalendarState.Error -> {}
             CalendarState.Loading -> {}
         }
+    }
+
+    fun prevMonth(month: Month, year: Int) {
+        val nowMonthIndex = Month.entries.indexOf(month) + 1
+        val nextMonthIndex = if (nowMonthIndex == Month.entries.size) {
+            0
+        } else {
+            nowMonthIndex - 1
+        }
+        this.month = Month.entries[nextMonthIndex]
+        this.year = if (nowMonthIndex == Month.entries.size) {
+            year - 1
+        } else {
+            year
+        }
+        calendarUseCase.invoke(
+            args = CalendarUseCase.Args(
+                month = month,
+                year = year,
+            )
+        )
+    }
+
+    fun nextMonth(month: Month, year: Int) {
+        val nowMonthIndex = Month.entries.indexOf(month) + 1
+        val nextMonthIndex = if (nowMonthIndex == Month.entries.size) {
+            0
+        } else {
+            nowMonthIndex + 1
+        }
+        this.month = Month.entries[nextMonthIndex]
+        this.year = if (nowMonthIndex == Month.entries.size) {
+            year + 1
+        } else {
+            year
+        }
+        calendarUseCase.invoke(
+            args = CalendarUseCase.Args(
+                month = month,
+                year = year,
+            )
+        )
     }
 
     //todo вынести UseCase

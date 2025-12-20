@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import org.koin.compose.koinInject
 import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.models.Month.January
 import ru.cruning.calendar.domain.models.Week
@@ -44,11 +44,12 @@ import ru.cruning.calendar.domain.models.Week.Thursday
 
 @Composable
 fun CalendarScreen(
-    viewModel: CalendarViewModel = hiltViewModel<CalendarViewModel>(),
+    viewModel: CalendarViewModel = koinInject<CalendarViewModel>(),
 ) {
     val rem by remember { viewModel.state }
     when (val state = rem) {
         is CalendarState.Data -> {
+            println("tag1: ${state}")
             Column(
                 verticalArrangement = Arrangement.SpaceAround
             ) {
@@ -56,7 +57,9 @@ fun CalendarScreen(
                     month = state.month,
                     year = state.year,
                     list = state.list,
-                    viewModel::selectDay
+                    viewModel::selectDay,
+                    viewModel::nextMonth,
+                    viewModel::prevMonth,
                 )
                 Box(
                     modifier = Modifier
@@ -77,7 +80,12 @@ fun CalendarScreen(
 }
 
 @Composable
-fun MonthTitle(month: Month, year: Int) {
+fun MonthTitle(
+    month: Month,
+    year: Int,
+    nextMonth: (month: Month, year: Int) -> Unit,
+    prevMonth: (month: Month, year: Int) -> Unit,
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -90,7 +98,9 @@ fun MonthTitle(month: Month, year: Int) {
             )
     ) {
         IconButton(
-            onClick = {},
+            onClick = {
+                prevMonth(month, year)
+            },
             modifier = Modifier
                 .width(24.dp)
                 .height(24.dp)
@@ -104,7 +114,9 @@ fun MonthTitle(month: Month, year: Int) {
             text = "${month.name} $year"
         )
         IconButton(
-            onClick = {},
+            onClick = {
+                nextMonth(month, year)
+            },
             modifier = Modifier
                 .width(24.dp)
                 .height(24.dp)
@@ -123,9 +135,16 @@ fun Calendar(
     year: Int,
     list: List<DayUi>,
     clickDay: (DayUi) -> Unit,
+    nextMonthClickDay: (Month, Int) -> Unit,
+    prevMonthClickDay: (Month, Int) -> Unit,
 ) {
     Column {
-        MonthTitle(month, year)
+        MonthTitle(
+            month,
+            year,
+            nextMonthClickDay,
+            prevMonthClickDay,
+        )
         LazyVerticalGrid(
             columns = GridCells.Fixed(7),
             horizontalArrangement = Arrangement.SpaceAround,
@@ -149,9 +168,6 @@ fun Calendar(
                         textAlign = TextAlign.Center,
                     )
                 }
-            }
-            items(listOf(1..Week.entries.indexOf(list.first().dayOfTheWeek))) {
-                Box { }
             }
             items(list) {
                 Box(contentAlignment = Alignment.Center) {
@@ -221,7 +237,12 @@ fun CalendarScreenPreview() {
 @Preview(widthDp = 412, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun MonthTitlePreview() {
-    MonthTitle(month = January, 2025)
+    MonthTitle(
+        month = January,
+        2025,
+        { _, _ -> },
+        { _, _ -> },
+    )
 }
 
 @Preview(widthDp = 412)
@@ -239,7 +260,10 @@ fun MonthPreview() {
                 isSelected = it == 9
             )
         },
-    ) {}
+        {},
+        { _, _ -> },
+        { _, _ -> },
+    )
 }
 
 @Preview(widthDp = 49, heightDp = 44)

@@ -4,9 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.cruning.calendar.data.CalendarApi
 import ru.cruning.calendar.data.models.CalendarDTO
-import javax.inject.Inject
 
-internal class CalendarRepositoryImpl @Inject constructor(
+internal class CalendarRepositoryImpl(
     private val api: CalendarApi,
 ) : CalendarRepository {
     override suspend fun updateCalendar() = withContext(Dispatchers.IO) {
