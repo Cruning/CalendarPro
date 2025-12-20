@@ -16,8 +16,8 @@ class CalendarViewModel(
     private val _state = mutableStateOf<CalendarState>(CalendarState.Loading)
     val state: State<CalendarState> = _state
 
-    var year = 2025
-    var month = Month.December
+    private val year = 2025
+    private val month = Month.December
 
     init {
         calendarUseCase.observe.onEach { calendar ->
@@ -68,46 +68,36 @@ class CalendarViewModel(
         }
     }
 
-    fun prevMonth(month: Month, year: Int) {
-        val nowMonthIndex = Month.entries.indexOf(month) + 1
-        val nextMonthIndex = if (nowMonthIndex == Month.entries.size) {
-            0
+    fun prevMonth(month: Month, year: Int): Pair<Month, Int> {
+        val monthIndex = Month.entries.indexOf(month)
+        val (newMonth, newYear) = if (monthIndex == 0) {
+            Month.entries[11] to year - 1
         } else {
-            nowMonthIndex - 1
-        }
-        this.month = Month.entries[nextMonthIndex]
-        this.year = if (nowMonthIndex == Month.entries.size) {
-            year - 1
-        } else {
-            year
+            Month.entries[monthIndex - 1] to year
         }
         calendarUseCase.invoke(
-            args = CalendarUseCase.Args(
-                month = month,
-                year = year,
+            CalendarUseCase.Args(
+                month = newMonth,
+                year = newYear,
             )
         )
+        return newMonth to newYear
     }
 
-    fun nextMonth(month: Month, year: Int) {
-        val nowMonthIndex = Month.entries.indexOf(month) + 1
-        val nextMonthIndex = if (nowMonthIndex == Month.entries.size) {
-            0
+    fun nextMonth(month: Month, year: Int): Pair<Month, Int> {
+        val monthIndex = Month.entries.indexOf(month)
+        val (newMonth, newYear) = if (monthIndex == 11) {
+            Month.entries[0] to year + 1
         } else {
-            nowMonthIndex + 1
-        }
-        this.month = Month.entries[nextMonthIndex]
-        this.year = if (nowMonthIndex == Month.entries.size) {
-            year + 1
-        } else {
-            year
+            Month.entries[monthIndex + 1] to year
         }
         calendarUseCase.invoke(
-            args = CalendarUseCase.Args(
-                month = month,
-                year = year,
+            CalendarUseCase.Args(
+                month = newMonth,
+                year = newYear,
             )
         )
+        return newMonth to newYear
     }
 
     //todo вынести UseCase

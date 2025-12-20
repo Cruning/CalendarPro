@@ -6,14 +6,17 @@ import ru.cruning.calendar.domain.models.Day
 import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.usecases.CalendarUseCase.Args
 
-class CalendarUseCase(
-    private val dayMapper: DayMapper
-) : FlowUseCase<Args, List<Day>>() {
-
+abstract class CalendarUseCase : FlowUseCase<Args, List<Day>>() {
     data class Args(
         val month: Month,
         val year: Int,
     )
+}
+
+
+class CalendarUseCaseImpl(
+    private val dayMapper: DayMapper
+) : CalendarUseCase() {
 
     override fun createFlow(args: Args) = flow {
         val countDays = getCountDays(args.year, args.month.ordinal + 1)

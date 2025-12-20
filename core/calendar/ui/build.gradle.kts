@@ -42,8 +42,6 @@ dependencies {
     implementation(libs.androidx.koin)
     implementation(libs.androidx.koin.compose)
 
-//    implementation(libs.retrofit.core)
-//    implementation(libs.retrofit.json)
-
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

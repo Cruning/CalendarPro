@@ -6,49 +6,30 @@ import org.junit.Test
 import org.junit.Assert.assertEquals
 import ru.cruning.calendar.domain.mappers.DayMapper
 import ru.cruning.calendar.domain.models.Day
-import ru.cruning.calendar.domain.models.Month
+import ru.cruning.calendar.domain.models.Month.December
+import ru.cruning.calendar.domain.models.Month.February
 import ru.cruning.calendar.domain.models.Week
 import ru.cruning.calendar.domain.usecases.CalendarUseCase.Args
 
 class CalendarUseCaseTest {
     private val dayMapper = DayMapper()
+    private val calendarUseCase = CalendarUseCaseImpl(dayMapper)
 
     @Test
     fun calendarUseCaseDecember2025Test() = runTest {
-        val useCase = CalendarUseCase(dayMapper)
-        useCase.invoke(
-            Args(
-                month = Month.December,
-                year = 2025,
-            )
-        )
-        val actual = useCase.observe.first()
+        val actual = calendarUseCase.invoke(Args(December, 2025)).observe.first()
         assertEquals(December2025, actual)
     }
 
     @Test
     fun calendarUseCaseFebruaryLeap2024Test() = runTest {
-        val useCase = CalendarUseCase(dayMapper)
-        useCase.invoke(
-            Args(
-                month = Month.February,
-                year = 2024,
-            )
-        )
-        val actual = useCase.observe.first()
+        val actual = calendarUseCase.invoke(Args(February, 2024)).observe.first()
         assertEquals(FebruaryLeap2024, actual)
     }
 
     @Test
     fun calendarUseCaseFebruaryNotLeap2025Test() = runTest {
-        val useCase = CalendarUseCase(dayMapper)
-        useCase.invoke(
-            Args(
-                month = Month.February,
-                year = 2025,
-            )
-        )
-        val actual = useCase.observe.first()
+        val actual = calendarUseCase.invoke(Args(February, 2025)).observe.first()
         assertEquals(FebruaryNotLeap2025, actual)
     }
 
