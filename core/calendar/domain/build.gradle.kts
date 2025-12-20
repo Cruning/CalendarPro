@@ -27,4 +27,7 @@ android {
 dependencies {
     implementation(libs.kotlin.datetime)
     implementation(libs.androidx.koin)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
