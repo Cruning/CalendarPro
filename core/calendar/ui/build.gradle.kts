@@ -41,8 +41,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.koin)
     implementation(libs.androidx.koin.compose)
-//    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
-    implementation(libs.retrofit.core)
-    implementation(libs.retrofit.json)
+//    implementation(libs.retrofit.core)
+//    implementation(libs.retrofit.json)
+
+    testImplementation(libs.junit)
 }
