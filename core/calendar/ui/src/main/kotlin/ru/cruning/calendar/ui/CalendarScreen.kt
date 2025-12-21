@@ -24,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
@@ -35,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.koin.compose.koinInject
+import org.orbitmvi.orbit.compose.collectAsState
 import ru.cruning.calendar.domain.models.Month
 import ru.cruning.calendar.domain.models.Month.January
 import ru.cruning.calendar.domain.models.Week
@@ -46,36 +46,24 @@ import ru.cruning.calendar.domain.models.Week.Thursday
 fun CalendarScreen(
     viewModel: CalendarViewModel = koinInject<CalendarViewModel>(),
 ) {
-    val rem by remember { viewModel.state }
-    when (val state = rem) {
-        is CalendarState.Data -> {
-            println("tag1: ${state}")
-            Column(
-                verticalArrangement = Arrangement.SpaceAround
-            ) {
-                Calendar(
-                    month = state.month,
-                    year = state.year,
-                    list = state.list,
-                    viewModel::selectDay,
-                    viewModel::nextMonth,
-                    viewModel::prevMonth,
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                )
-            }
-        }
-
-        CalendarState.Error -> {
-            Text("Ошибка")
-        }
-
-        CalendarState.Loading -> {
-            Text("Загрузка")
-        }
+    val state by viewModel.collectAsState()
+    println("tag1: ${state}")
+    Column(
+        verticalArrangement = Arrangement.SpaceAround
+    ) {
+        Calendar(
+            month = state.month,
+            year = state.year,
+            list = state.days,
+            viewModel::selectDay,
+            viewModel::intentNextMonth,
+            viewModel::intentPrevMonth,
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp)
+        )
     }
 }
 
@@ -83,8 +71,8 @@ fun CalendarScreen(
 fun MonthTitle(
     month: Month,
     year: Int,
-    nextMonth: (month: Month, year: Int) -> Unit,
-    prevMonth: (month: Month, year: Int) -> Unit,
+    nextMonth: () -> Unit,
+    prevMonth: () -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -99,7 +87,7 @@ fun MonthTitle(
     ) {
         IconButton(
             onClick = {
-                prevMonth(month, year)
+                prevMonth()
             },
             modifier = Modifier
                 .width(24.dp)
@@ -115,7 +103,7 @@ fun MonthTitle(
         )
         IconButton(
             onClick = {
-                nextMonth(month, year)
+                nextMonth()
             },
             modifier = Modifier
                 .width(24.dp)
@@ -135,8 +123,8 @@ fun Calendar(
     year: Int,
     list: List<DayUi>,
     clickDay: (DayUi) -> Unit,
-    nextMonthClickDay: (Month, Int) -> Unit,
-    prevMonthClickDay: (Month, Int) -> Unit,
+    nextMonthClickDay: () -> Unit,
+    prevMonthClickDay: () -> Unit,
 ) {
     Column {
         MonthTitle(
@@ -240,8 +228,8 @@ fun MonthTitlePreview() {
     MonthTitle(
         month = January,
         2025,
-        { _, _ -> },
-        { _, _ -> },
+        {},
+        {},
     )
 }
 
@@ -261,8 +249,8 @@ fun MonthPreview() {
             )
         },
         {},
-        { _, _ -> },
-        { _, _ -> },
+        {},
+        {},
     )
 }
 

@@ -33,14 +33,19 @@ dependencies {
 
     implementation(project(":core:designsystem"))
     implementation(project(":core:calendar:domain"))
+    implementation(libs.androidx.koin)
+    implementation(libs.androidx.koin.compose)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.material3)
     debugImplementation(libs.androidx.ui.tooling)
-    implementation(libs.androidx.koin)
-    implementation(libs.androidx.koin.compose)
+
+    implementation(libs.orbit.compose)
+    implementation(libs.orbit.core)
+    implementation(libs.orbit.viewmodel)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
