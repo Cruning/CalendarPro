@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "CalendarPro"
 include(":app")
- 
+include(":core:designsystem")
+include(":core:calendar:data")
+include(":core:calendar:domain")
+include(":core:calendar:ui")
