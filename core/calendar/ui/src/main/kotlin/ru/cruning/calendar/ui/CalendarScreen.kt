@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.sharp.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.sharp.KeyboardArrowRight
+import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.graphics.Color.Companion.White
+import ru.cruning.core.designsystem.compose.theme.Typography
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,7 +49,7 @@ fun CalendarScreen(
     viewModel: CalendarViewModel = koinInject<CalendarViewModel>(),
 ) {
     val state by viewModel.collectAsState()
-    println("tag1: ${state}")
+    println("tag1: $state")
     Column(
         verticalArrangement = Arrangement.SpaceAround
     ) {
@@ -126,7 +128,7 @@ fun Calendar(
     nextMonthClickDay: () -> Unit,
     prevMonthClickDay: () -> Unit,
 ) {
-    Column {
+    Card {
         MonthTitle(
             month,
             year,
@@ -163,6 +165,7 @@ fun Calendar(
                 }
             }
         }
+        Money()
     }
 }
 
@@ -216,10 +219,36 @@ fun Day(day: DayUi, click: (DayUi) -> Unit) {
     }
 }
 
-@Preview(device = "id:pixel_7", showSystemUi = true)
 @Composable
-fun CalendarScreenPreview() {
-    CalendarScreen()
+fun Money() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "21 Декабря",
+            modifier = Modifier.padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 32.dp,
+            ),
+            style = Typography.bodyMedium,
+        )
+        Text(
+            text = "5900 рублей",
+            style = Typography.bodyLarge,
+            modifier = Modifier.padding(
+                horizontal = 16.dp,
+                vertical = 16.dp,
+            ),
+        )
+    }
+}
+
+@Preview(widthDp = 412)
+@Composable
+fun MoneyPreview() {
+    Money()
 }
 
 @Preview(widthDp = 412, backgroundColor = 0xFFFFFFFF)
