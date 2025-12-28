@@ -26,6 +26,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:calendar:domain"))
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.json)
     implementation(libs.androidx.koin)

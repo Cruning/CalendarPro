@@ -6,7 +6,7 @@ import ru.cruning.calendar.domain.usecases.CalendarUseCase
 import ru.cruning.calendar.domain.usecases.CalendarUseCaseImpl
 
 val useCaseModule = module {
-    factory<CalendarUseCase> { CalendarUseCaseImpl(get()) }
+    factory<CalendarUseCase> { CalendarUseCaseImpl(get(), get()) }
 }
 
 val mapperModule = module {

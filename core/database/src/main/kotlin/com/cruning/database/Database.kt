@@ -1,5 +1,9 @@
 package com.cruning.database
 
-class Database {
+import android.content.Context
 
+class Database(context: Context) {
+    fun getWeekends(): List<Int> {
+        return emptyList()
+    }
 }

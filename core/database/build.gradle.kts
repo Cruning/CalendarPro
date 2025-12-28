@@ -32,5 +32,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.room)
+//    implementation(libs.room.ksp)
     implementation(libs.androidx.koin)
 }

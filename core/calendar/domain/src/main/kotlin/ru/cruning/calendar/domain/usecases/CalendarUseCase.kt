@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.flow
 import ru.cruning.calendar.domain.mappers.DayMapper
 import ru.cruning.calendar.domain.models.Day
 import ru.cruning.calendar.domain.models.Month
+import ru.cruning.calendar.domain.repository.CalendarRepository
 import ru.cruning.calendar.domain.usecases.CalendarUseCase.Args
 
 abstract class CalendarUseCase : FlowUseCase<Args, List<Day>>() {
@@ -15,7 +16,8 @@ abstract class CalendarUseCase : FlowUseCase<Args, List<Day>>() {
 
 
 class CalendarUseCaseImpl(
-    private val dayMapper: DayMapper
+    private val dayMapper: DayMapper,
+    private val calendarRepository: CalendarRepository,
 ) : CalendarUseCase() {
 
     override fun createFlow(args: Args) = flow {

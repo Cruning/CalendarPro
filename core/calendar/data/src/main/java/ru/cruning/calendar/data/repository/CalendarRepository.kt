@@ -3,6 +3,7 @@ package ru.cruning.calendar.data.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.cruning.calendar.data.CalendarApi
+import ru.cruning.calendar.domain.repository.CalendarRepository
 
 internal class CalendarRepositoryImpl(
     private val api: CalendarApi,
@@ -12,8 +13,4 @@ internal class CalendarRepositoryImpl(
         //insert
         true
     }
-}
-
-interface CalendarRepository {
-    suspend fun updateCalendar(): Boolean
 }
