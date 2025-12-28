@@ -2,7 +2,7 @@ package ru.cruning.calendarpro
 
 import android.app.Application
 import org.koin.core.context.startKoin
-import ru.cruning.calendar.data.di.databaseModule
+import ru.cruning.calendar.data.di.repositoryModule
 import ru.cruning.calendar.data.di.restModule
 import ru.cruning.calendar.domain.di.mapperModule
 import ru.cruning.calendar.domain.di.useCaseModule
@@ -13,7 +13,7 @@ class CalendarProApplication : Application() {
         super.onCreate()
         startKoin {
             modules(
-                databaseModule,
+                repositoryModule,
                 restModule,
                 useCaseModule,
                 mapperModule,
