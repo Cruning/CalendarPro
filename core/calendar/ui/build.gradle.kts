@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.orbit.compose)
     implementation(libs.orbit.core)
     implementation(libs.orbit.viewmodel)
+    implementation(libs.orbit.test)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

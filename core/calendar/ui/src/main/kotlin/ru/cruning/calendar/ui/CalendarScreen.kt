@@ -57,7 +57,7 @@ fun CalendarScreen(
             month = state.month,
             year = state.year,
             list = state.days,
-            viewModel::selectDay,
+            viewModel::intentSelectDay,
             viewModel::intentNextMonth,
             viewModel::intentPrevMonth,
         )
@@ -123,7 +123,7 @@ fun MonthTitle(
 fun Calendar(
     month: Month,
     year: Int,
-    list: List<DayUi>,
+    list: List<DayUi?>,
     clickDay: (DayUi) -> Unit,
     nextMonthClickDay: () -> Unit,
     prevMonthClickDay: () -> Unit,
@@ -159,9 +159,9 @@ fun Calendar(
                     )
                 }
             }
-            items(list) {
+            items(list) { day ->
                 Box(contentAlignment = Alignment.Center) {
-                    Day(it, clickDay)
+                    day?.let { Day(day, clickDay) }
                 }
             }
         }
@@ -268,7 +268,7 @@ fun MonthPreview() {
     Calendar(
         month = January,
         year = 2025,
-        list = (1..30).map {
+        list = listOf(null, null, null) + (1..30).map {
             DayUi(
                 dayOfTheWeek = Thursday,
                 dayOfMonth = it,

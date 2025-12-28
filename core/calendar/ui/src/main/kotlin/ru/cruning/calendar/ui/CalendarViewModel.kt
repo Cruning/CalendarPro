@@ -28,10 +28,11 @@ class CalendarViewModel(
             val money = getSalary() / calendar.size
             intent {
                 reduce {
+                    val emptyDays = List(calendar.first().dayOfTheWeek.ordinal) { null }
                     CalendarState(
                         month = state.month,
                         year = state.year,
-                        days = calendar.map {
+                        days = emptyDays + calendar.map {
                             DayUi(
                                 dayOfTheWeek = it.dayOfTheWeek,
                                 dayOfMonth = it.dayOfMonth,
@@ -78,15 +79,21 @@ class CalendarViewModel(
         }
     }
 
-    override fun selectDay(dayUi: DayUi) {
+    override fun intentSelectDay(dayUi: DayUi) {
         intent {
             reduce {
-                state.copy(days = qwer(dayUi, state.days))
+                state.copy(days = state.days.map { day ->
+                    if (day == dayUi) {
+                        day.copy(isSelected = !dayUi.isSelected)
+                    } else {
+                        day?.copy(isSelected = false)
+                    }
+                })
             }
         }
     }
 
-    fun prevMonth(month: Month, year: Int): Pair<Month, Int> {
+    private fun prevMonth(month: Month, year: Int): Pair<Month, Int> {
         val monthIndex = Month.entries.indexOf(month)
         val (newMonth, newYear) = if (monthIndex == 0) {
             Month.entries[11] to year - 1
@@ -96,7 +103,7 @@ class CalendarViewModel(
         return newMonth to newYear
     }
 
-    fun nextMonth(month: Month, year: Int): Pair<Month, Int> {
+    private fun nextMonth(month: Month, year: Int): Pair<Month, Int> {
         val monthIndex = Month.entries.indexOf(month)
         val (newMonth, newYear) = if (monthIndex == 11) {
             Month.entries[0] to year + 1
@@ -104,16 +111,6 @@ class CalendarViewModel(
             Month.entries[monthIndex + 1] to year
         }
         return newMonth to newYear
-    }
-
-    fun qwer(dayUi: DayUi, days: List<DayUi>): List<DayUi> {
-        return days.map { day ->
-            if (day == dayUi) {
-                day.copy(isSelected = !dayUi.isSelected)
-            } else {
-                day.copy(isSelected = false)
-            }
-        }
     }
 
     //todo вынести UseCase
@@ -126,7 +123,7 @@ class CalendarViewModel(
 data class CalendarState(
     val month: Month,
     val year: Int,
-    val days: List<DayUi>,
+    val days: List<DayUi?>,
     val isLoading: Boolean,
 )
 
@@ -134,5 +131,5 @@ interface CalendarSideEffect {}
 interface CalendarActions {
     fun intentPrevMonth()
     fun intentNextMonth()
-    fun selectDay(dayUi: DayUi)
+    fun intentSelectDay(dayUi: DayUi)
 }

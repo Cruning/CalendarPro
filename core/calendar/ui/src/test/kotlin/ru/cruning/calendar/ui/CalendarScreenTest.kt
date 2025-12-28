@@ -2,8 +2,9 @@ package ru.cruning.calendar.ui
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import org.junit.Assert.assertEquals
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.orbitmvi.orbit.test.test
 import ru.cruning.calendar.domain.models.Day
 import ru.cruning.calendar.domain.models.Month.December
 import ru.cruning.calendar.domain.models.Month.February
@@ -12,57 +13,120 @@ import ru.cruning.calendar.domain.models.Month.November
 import ru.cruning.calendar.domain.models.Week
 import ru.cruning.calendar.domain.usecases.CalendarUseCase
 
-/**
- * todo nextMonth и prevMonth должны быть private
- */
-
 class CalendarScreenTest {
     private val viewModel = CalendarViewModel(CalendarUseCaseFake())
 
     @Test
-    fun nextMonthDecember2025Test() {
-        val (month, year) = viewModel.nextMonth(December, 2025)
-        assertEquals(January, month)
-        assertEquals(2026, year)
+    fun nextMonthDecember2025Test() = runTest {
+        viewModel.test(
+            testScope = this,
+            initialState = CalendarState(
+                month = December,
+                year = 2025,
+                days = emptyList(),
+                isLoading = true,
+            )
+        ) {
+            containerHost.intentNextMonth()
+            expectState {
+                copy(
+                    month = January,
+                    year = 2026,
+                )
+            }
+        }
     }
 
     @Test
-    fun nextMonthJanuary2025Test() {
-        val (month, year) = viewModel.nextMonth(January, 2025)
-        assertEquals(February, month)
-        assertEquals(2025, year)
+    fun nextMonthJanuary2025Test() = runTest {
+        viewModel.test(
+            testScope = this,
+            initialState = CalendarState(
+                month = January,
+                year = 2025,
+                days = emptyList(),
+                isLoading = true,
+            )
+        ) {
+            containerHost.intentNextMonth()
+            expectState {
+                copy(
+                    month = February,
+                    year = 2025,
+                )
+            }
+        }
     }
 
     @Test
-    fun prevMonthDecember2025Test() {
-        val (month, year) = viewModel.prevMonth(December, 2025)
-        assertEquals(November, month)
-        assertEquals(2025, year)
+    fun prevMonthDecember2025Test() = runTest {
+        viewModel.test(
+            testScope = this,
+            initialState = CalendarState(
+                month = December,
+                year = 2025,
+                days = emptyList(),
+                isLoading = true,
+            )
+        ) {
+            containerHost.intentPrevMonth()
+            expectState {
+                copy(
+                    month = November,
+                    year = 2025,
+                )
+            }
+        }
     }
 
     @Test
-    fun prevMonthJanuary2025Test() {
-        val (month, year) = viewModel.prevMonth(January, 2025)
-        assertEquals(December, month)
-        assertEquals(2024, year)
+    fun prevMonthJanuary2025Test() = runTest {
+        viewModel.test(
+            testScope = this,
+            initialState = CalendarState(
+                month = January,
+                year = 2025,
+                days = emptyList(),
+                isLoading = true,
+            )
+        ) {
+            containerHost.intentPrevMonth()
+            expectState {
+                copy(
+                    month = December,
+                    year = 2024,
+                )
+            }
+        }
     }
 
     @Test
-    fun selectDayTest() {
-        val list3 = viewModel.qwer(
-            DayUi(
-                dayOfTheWeek = Week.Monday,
-                dayOfMonth = 1,
-                money = 5000f,
-                isToday = false,
-                isSelected = false,
-            ),
-            list
-        )
-        assertEquals(list2, list3)
+    fun selectDayTest() = runTest {
+        viewModel.test(
+            this,
+            CalendarState(
+                month = December,
+                year = 2025,
+                days = nonSelectDays,
+                isLoading = true,
+            )
+        ) {
+            containerHost.intentSelectDay(
+                DayUi(
+                    dayOfTheWeek = Week.Monday,
+                    dayOfMonth = 1,
+                    money = 5000f,
+                    isToday = false,
+                    isSelected = false,
+                )
+            )
+            expectState {
+                copy(days = oneDaySelect)
+            }
+        }
     }
 
-    private val list = listOf<DayUi>(
+    private val nonSelectDays = listOf(
         DayUi(
             dayOfTheWeek = Week.Monday,
             dayOfMonth = 1,
@@ -79,7 +143,7 @@ class CalendarScreenTest {
         ),
     )
 
-    private val list2 = listOf<DayUi>(
+    private val oneDaySelect = listOf(
         DayUi(
             dayOfTheWeek = Week.Monday,
             dayOfMonth = 1,
