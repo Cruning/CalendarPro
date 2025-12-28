@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Blue
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.graphics.Color.Companion.White
 import ru.cruning.core.designsystem.compose.theme.Typography
 import androidx.compose.ui.text.style.TextAlign
@@ -185,38 +185,30 @@ fun Day(day: DayUi, click: (DayUi) -> Unit) {
     ) {
         Text(
             text = day.dayOfMonth.toString(),
-            color = White.takeIf { day.isSelected } ?: Black,
+            color = when {
+                day.isSelected -> White
+                day.isFree -> Red
+                else -> Black
+//                White.takeIf { day.isSelected } ?: Black,
+            },
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .wrapContentHeight()
                 .weight(1f)
         )
-//        todo скорее всего будет под колендарем в отдельном блоке
-//        Text(
-//            text = day.money.toString(),
-//            color = when {
-//                day.dayOfMonth == 0 -> Color.Transparent
-//                day.isSelected -> Color.White
-//                else -> Color.Black
-//            },
-//            fontSize = 14.sp,
-//            textAlign = TextAlign.Center,
+    }
+//    todo точка должна быть снизу, а не в центре
+//    if (day.isToday) {
+//        Box(
 //            modifier = Modifier
-//                .wrapContentHeight()
-//                .weight(1f)
+//                .size(3.dp)
+//                .background(
+//                    color = Blue,
+//                    shape = CircleShape
+//                )
 //        )
-    }
-    if (day.isToday) {
-        Box(
-            modifier = Modifier
-                .size(3.dp)
-                .background(
-                    color = Blue,
-                    shape = CircleShape
-                )
-        )
-    }
+//    }
 }
 
 @Composable
@@ -274,7 +266,15 @@ fun MonthPreview() {
                 dayOfMonth = it,
                 isToday = it == 11,
                 money = 2000f,
-                isSelected = it == 9
+                isSelected = it == 10,
+                isFree = it == 3
+                        || it == 4
+                        || it == 10
+                        || it == 11
+                        || it == 17
+                        || it == 18
+                        || it == 24
+                        || it == 25,
             )
         },
         {},
@@ -293,6 +293,7 @@ fun DayPreview() {
             isToday = false,
             money = 2000f,
             isSelected = false,
+            isFree = false,
         ),
     ) {}
 }
@@ -307,6 +308,7 @@ fun TodayPreview() {
             isToday = true,
             money = 2000f,
             isSelected = false,
+            isFree = false,
         ),
     ) {}
 }
@@ -320,7 +322,8 @@ fun SelectedDayPreview() {
             dayOfMonth = 20,
             isToday = true,
             money = 2000f,
-            isSelected = true
+            isSelected = true,
+            isFree = false,
         ),
     ) {}
 }
@@ -331,4 +334,5 @@ data class DayUi(
     val money: Float,
     val isToday: Boolean,
     val isSelected: Boolean,
+    val isFree: Boolean,
 )

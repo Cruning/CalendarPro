@@ -39,6 +39,7 @@ class CalendarViewModel(
                                 money = money,
                                 isToday = false,
                                 isSelected = false,
+                                isFree = it.isFree,
                             )
                         },
                         isLoading = true,
